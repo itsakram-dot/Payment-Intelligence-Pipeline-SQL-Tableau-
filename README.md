@@ -1,6 +1,8 @@
 # Payment Intelligence Pipeline (SQL → Tableau)
 Transforming raw salon appointment logs into board-ready financial KPIs.
 
+![yyfdyv3db](https://github.com/user-attachments/assets/ccc5f381-e226-4a0a-80ca-b64a3b7fc713)
+
 ## Overview
 This project simulates a real financial-reporting workflow for service-based businesses (salons, spas, gyms) by transforming raw appointment data into trusted executive KPIs. It mirrors the type of analytics used inside SaaS and payments platforms like Mindbody, Fresha, and similar operational-finance systems.
 
