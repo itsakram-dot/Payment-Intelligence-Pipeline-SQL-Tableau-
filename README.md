@@ -1,97 +1,76 @@
 # Payment Intelligence Pipeline (SQL → Tableau)
-Transforming raw salon appointment logs into board-ready financial KPIs.
+**Transforming raw appointment logs into governed Financial & Operational KPIs.**
 
-![yyfdyv3db](https://github.com/user-attachments/assets/ccc5f381-e226-4a0a-80ca-b64a3b7fc713)
+<img width="2598" height="1558" alt="Monthly Financial Performance" src="https://github.com/user-attachments/assets/228838e6-2372-4680-80f2-245be1b90822" />
 
-## Overview
-This project simulates a real financial-reporting workflow for service-based businesses (salons, spas, gyms) by transforming raw appointment data into trusted executive KPIs. It mirrors the type of analytics used inside SaaS and payments platforms like Mindbody, Fresha, and similar operational-finance systems.
 
-Using SQL and Tableau, I engineered a pipeline that models:
-- GPV (Gross Payment Volume)
-- Cancellation Risk / Churn Signals
-- Month-over-Month Revenue Growth
-- Active Customer Base
-- Operational risk insights
+## 📌 Executive Summary
+Built an end-to-end financial reporting pipeline that standardizes revenue recognition and churn analysis for high-volume service businesses (SaaS/Salon/Spa).
 
-## Data Source
+Unlike standard "dashboarding" projects, this pipeline solves two specific data engineering challenges often found in fintech:
+1.  **Revenue Imputation:** The source system (bookings log) contained incomplete transaction values ($0 deposits). I engineered a SQL logic layer to impute revenue based on service mix (e.g., Balayage vs. Haircut pricing).
+2.  **Scenario Modeling:** Finance stakeholders need more than historical charts. I built an interactive "What-If" model in Tableau to quantify the revenue impact of reducing churn by 1-5%.
 
-**Dataset:** Hair Salon Appointments (Anonymous)  
-**Source:** https://www.kaggle.com/datasets/calebhwhite/hair-salon-appointments-anonymous  
+**Business Impact:** Identified a ~25% churn spike in Q4 and modeled a **projected revenue recovery opportunity** of ~$122/month (per single salon location) via retention intervention.
 
-- Customer & provider IDs salted  
-- Appointment & charge IDs hashed  
-- Datetimes shifted per-client  
-- Card expiration coarsened  
-
-## Technical Stack
-- SQL (SQLite) — data modeling, CTEs, window functions  
-- Tableau Online — executive visualization and KPI dashboard  
+## 🛠 Technical Stack
+* **SQL (SQLite):** CTEs, Window Functions, Data Imputation, QC/Audit Flags.
+* **Tableau:** Parameters, Computed Sets, Dual-Axis Visualization, Red/Green Conditional Logic.
 
 ---
 
-## 1. Data Modeling Layer (SQL)
+## 1. Data Engineering Layer (SQL)
+*File: `sql/monthly_kpis.sql`*
 
-The raw appointment log was cleaned and transformed into monthly financial metrics using:
+Raw appointment logs are noisy and often lack financial context. I wrote a comprehensive SQL pipeline to transform row-level booking data into an auditable monthly finance table.
 
-**✔ CTEs**  
-For readability and modular transformations.
-
-**✔ Window Functions**  
-To calculate:
-- Previous month GPV  
-- MoM revenue growth  
-- Churn indicators 
-
-Full SQL available in: montly_KPI's.sql
+**Key Engineering Features:**
+* **Revenue Imputation:** `CASE` logic to assign estimated transaction values to services where raw deposit data was missing ($0.00).
+* **Safe MoM Growth:** Implemented a "Safe Denominator" logic (`MAX(prev_month, $150)`) to prevent artificial 400%+ growth spikes during low-volume months.
+* **Prescriptive Metrics:** Calculated `delta_gpv_1pp` (Dollar value of 1 percentage point of churn) directly in SQL to power downstream scenario modeling.
+* **Audit Flags:** Automated QC columns (`qc_integrity_pass`) to verify that `cancelled_appointments <= scheduled_appointments`.
 
 ---
 
-## 2. Visualization Layer (Tableau)
+## 2. Visualization & Strategy Layer (Tableau)
+*Live Dashboard: [View on Tableau Public](https://public.tableau.com/app/profile/akram.mohammed3381/viz/MonthlyFinancialPerformanceRevenueVsChurnRisk/Dashboard1)*
 
-### Dashboard 1 — Revenue vs. Churn Risk
-- GPV (bars, left axis)  
-- Cancellation Rate % (line, right axis)  
-- Dual-axis analysis  
-- Color-coded risk segments  
+### Dashboard 1: Revenue vs. Churn Risk
+* **Dual-Axis Visualization:** Correlates Gross Payment Volume (GPV) against Cancellation Rate % to spot operational failures.
+* **Insight:** Validated a correlation where capacity constraints (mid-summer peak) led to a subsequent 15-25% spike in cancellations.
 
-### Dashboard 2 — MoM Revenue Growth
-- Quick Table Calculation (Percent Difference)  
-- Green = Positive Growth  
-- Red = Negative Growth  
-- Highlights seasonal/operational performance dips  
+### Dashboard 2: Growth & Scenario Modeling
+* **Interactive Slider:** "What-If" parameter allowing executives to toggle a 1-5% churn reduction.
+* **Dynamic Calculation:** Real-time computation of `[Revenue Opportunity $]`, proving the financial ROI of retention campaigns.
+* **Red/Green Logic:** Conditional formatting on MoM Growth bars to instantly flag negative revenue trends.
 
 ---
 
-## 3. Key Insights Identified
-
-✔ GPV peaked in midsummer, aligning with typical salon/spa seasonality.  
-✔ As revenue peaked, cancellation risk increased ~15%, signaling capacity or scheduling pressures.  
-✔ MoM revenue softened heading into Q4, a predictable seasonal decline.  
-✔ Booking channels and service types showed clear retention patterns.  
+## 3. Key Findings
+* **Q4 Risk Detected:** While August hit a revenue peak ($3.4k), **November saw a massive Churn spike to ~25%**, signaling operational/staffing friction.
+* **Revenue Opportunity:** The scenario model identified that a conservative 5% reduction in churn would recover **~$122 in immediate monthly revenue** (per location).
+* **Seasonality:** MoM revenue softened heading into Q4, consistent with industry trends, but the disproportionate churn spike indicates a service-level issue rather than just demand softening.
 
 ---
 
 ## 4. Screenshots
-<img width="1636" height="1480" alt="Monthly  Revenue % Churn Risk (1)" src="https://github.com/user-attachments/assets/6fff4abd-7208-4ee2-b4f1-9b5dc870416e" />
-<img width="1476" height="1480" alt="MOM growth" src="https://github.com/user-attachments/assets/db6a088b-726e-438a-9ac3-431754c7d448" />
-<img width="2598" height="1538" alt="Monthly Financial Performance" src="https://github.com/user-attachments/assets/196056b4-fe54-443c-8fa1-2e20796c369b" />
 
-**Tableau Public link:**  
-https://public.tableau.com/app/profile/akram.mohammed3381/viz/MonthlyFinancialPerformanceRevenueVsChurnRisk/Dashboard1
+**Revenue vs. Churn Risk (Detail)**
+<img width="1636" height="1480" alt="Monthly  Revenue % Churn Risk" src="https://github.com/user-attachments/assets/a7a28832-39db-4689-9f81-16da637adec7" />
+
+**MoM Growth & Red/Green Logic (Detail)**
+<img width="1476" height="1480" alt="MOM growth" src="https://github.com/user-attachments/assets/c439e963-4700-42ab-a7e4-e0db153fa6bf" />
 
 ---
 
-## 5. Repository Structure
+## 📂 Repository Structure
 
 ```text
 data/
-  appointments_anonymized.csv
+  appointments_anonymized.csv  # Raw data (salted/hashed)
 
 sql/
-  monthly_KPI's.sql
-
-tableau/
-  public_link.txt  (contains the Tableau Public URL)
+  monthly_KPI's1.sql             # The cleaning & metrics logic
 
 screenshots/
   revenue_vs_churn.png
@@ -99,3 +78,8 @@ screenshots/
   executive_dashboard.png
 
 README.md
+
+🔗 Data Source
+Dataset: Hair Salon Appointments (Anonymous) via Kaggle.
+
+Note: IDs are salted/hashed and datetimes shifted for privacy.
