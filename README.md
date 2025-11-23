@@ -20,7 +20,7 @@ Unlike standard "dashboarding" projects, this pipeline solves two specific data 
 ---
 
 ## 1. Data Engineering Layer (SQL)
-*File: `sql/monthly_kpis.sql`*
+*File: `sql/monthly_KPI's1.sql`*
 
 Raw appointment logs are noisy and often lack financial context. I wrote a comprehensive SQL pipeline to transform row-level booking data into an auditable monthly finance table.
 
