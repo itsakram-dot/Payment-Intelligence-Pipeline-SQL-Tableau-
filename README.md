@@ -27,7 +27,7 @@ Card expiration coarsened
 
 ## Technical Stack ##
 	•	SQL (SQLite) — data modeling, CTEs, window functions
-	•	Tableau Online — executive visualization and KPI dashboards
+	•	Tableau Online — executive visualization and KPI dashboard
 
 # 1. Data Modeling Layer (SQL) 
 
