@@ -12,7 +12,7 @@ This project focuses on two problems:
 1) **Revenue imputation:** The bookings log has $0 deposits. I wrote SQL to estimate prices by service type (e.g., Balayage vs Haircut).  
 2) **Scenario modeling:** Added a Tableau What-If to show the dollar impact of cutting cancellations by 1–5 percentage points.
 
-**Result:** Found a ~25% cancellation spike in Q4 and a **~$122/month** recovery opportunity per location from a modest retention lift.
+Result: Found a ~25% cancellation spike in Q4 and a ~$122/month recovery opportunity per location from a modest retention lift.
 
 ---
 
