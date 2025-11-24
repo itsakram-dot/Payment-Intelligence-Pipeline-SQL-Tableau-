@@ -1,76 +1,104 @@
 # Payment Intelligence Pipeline (SQL → Tableau)
-**Transforming raw appointment logs into governed Financial & Operational KPIs.**
+**Transforming raw appointment logs into governed financial and operational KPIs.**
 
-<img width="2598" height="1558" alt="Monthly Financial Performance" src="https://github.com/user-attachments/assets/228838e6-2372-4680-80f2-245be1b90822" />
+<img width="2598" height="1558" alt="Monthly Financial Performance (1)" src="https://github.com/user-attachments/assets/45967515-5db7-4053-933e-ad93a4bc9ef6" />
 
+---
 
 ## 📌 Executive Summary
-Built an end-to-end financial reporting pipeline that standardizes revenue recognition and churn analysis for high-volume service businesses (SaaS/Salon/Spa).
+Built a pipeline that standardizes revenue recognition and cancellation analysis for high-volume service businesses (salon/spa/SaaS-style).
 
-Unlike standard "dashboarding" projects, this pipeline solves two specific data engineering challenges often found in fintech:
-1.  **Revenue Imputation:** The source system (bookings log) contained incomplete transaction values ($0 deposits). I engineered a SQL logic layer to impute revenue based on service mix (e.g., Balayage vs. Haircut pricing).
-2.  **Scenario Modeling:** Finance stakeholders need more than historical charts. I built an interactive "What-If" model in Tableau to quantify the revenue impact of reducing churn by 1-5%.
+This project focuses on two problems:
+1) **Revenue imputation:** The bookings log has $0 deposits. I wrote SQL to estimate prices by service type (e.g., Balayage vs Haircut).  
+2) **Scenario modeling:** Added a Tableau What-If to show the dollar impact of cutting cancellations by 1–5 percentage points.
 
-**Business Impact:** Identified a ~25% churn spike in Q4 and modeled a **projected revenue recovery opportunity** of ~$122/month (per single salon location) via retention intervention.
+**Result:** Found a ~25% cancellation spike in Q4 and a **~$122/month** recovery opportunity per location from a modest retention lift.
+
+---
 
 ## 🛠 Technical Stack
-* **SQL (SQLite):** CTEs, Window Functions, Data Imputation, QC/Audit Flags.
-* **Tableau:** Parameters, Computed Sets, Dual-Axis Visualization, Red/Green Conditional Logic.
+- **SQL (SQLite):** CTEs, window functions, price imputation, QC flags  
+- **Tableau:** parameters, dual-axis views, scenario slider, red/green MoM bars
 
 ---
 
-## 1. Data Engineering Layer (SQL)
+## 1) Data Engineering Layer (SQL)
 *File: `sql/monthly_KPI's1.sql`*
 
-Raw appointment logs are noisy and often lack financial context. I wrote a comprehensive SQL pipeline to transform row-level booking data into an auditable monthly finance table.
+The SQL turns row-level bookings into a monthly finance table you can audit.
 
-**Key Engineering Features:**
-* **Revenue Imputation:** `CASE` logic to assign estimated transaction values to services where raw deposit data was missing ($0.00).
-* **Safe MoM Growth:** Implemented a "Safe Denominator" logic (`MAX(prev_month, $150)`) to prevent artificial 400%+ growth spikes during low-volume months.
-* **Prescriptive Metrics:** Calculated `delta_gpv_1pp` (Dollar value of 1 percentage point of churn) directly in SQL to power downstream scenario modeling.
-* **Audit Flags:** Automated QC columns (`qc_integrity_pass`) to verify that `cancelled_appointments <= scheduled_appointments`.
-
----
-
-## 2. Visualization & Strategy Layer (Tableau)
-*Live Dashboard: [View on Tableau Public](https://public.tableau.com/app/profile/akram.mohammed3381/viz/MonthlyFinancialPerformanceRevenueVsChurnRisk/Dashboard1)*
-
-### Dashboard 1: Revenue vs. Churn Risk
-* **Dual-Axis Visualization:** Correlates Gross Payment Volume (GPV) against Cancellation Rate % to spot operational failures.
-* **Insight:** Validated a correlation where capacity constraints (mid-summer peak) led to a subsequent 15-25% spike in cancellations.
-
-### Dashboard 2: Growth & Scenario Modeling
-* **Interactive Slider:** "What-If" parameter allowing executives to toggle a 1-5% churn reduction.
-* **Dynamic Calculation:** Real-time computation of `[Revenue Opportunity $]`, proving the financial ROI of retention campaigns.
-* **Red/Green Logic:** Conditional formatting on MoM Growth bars to instantly flag negative revenue trends.
+**What it does**
+- **Price imputation:** `CASE` logic assigns prices when deposits are $0.00  
+- **Safe MoM growth:** uses `MAX(prev_gpv, 150)` to avoid base-effect spikes  
+- **Prescriptive metric:** `delta_gpv_1pp` = GPV gain from a 1-point drop in cancellations  
+- **QC check:** ensures `cancelled_appointments ≤ scheduled_appointments`
 
 ---
 
-## 3. Key Findings
-* **Q4 Risk Detected:** While August hit a revenue peak ($3.4k), **November saw a massive Churn spike to ~25%**, signaling operational/staffing friction.
-* **Revenue Opportunity:** The scenario model identified that a conservative 5% reduction in churn would recover **~$122 in immediate monthly revenue** (per location).
-* **Seasonality:** MoM revenue softened heading into Q4, consistent with industry trends, but the disproportionate churn spike indicates a service-level issue rather than just demand softening.
+## 2) Visualization & Strategy Layer (Tableau)
+**Live Dashboard:** https://public.tableau.com/app/profile/akram.mohammed3381/viz/MonthlyFinancialPerformanceRevenueVsChurnRisk/Dashboard1
+
+### Dashboard 1 — Revenue vs Cancellation Risk
+- GPV (bars) vs Cancellation Rate % (line) on a dual axis  
+- Mid-summer revenue peaks line up with higher cancellations (15–25%)
+
+### Dashboard 2 — Growth & Scenario Modeling
+- What-If slider for a 1–5% cancellation cut  
+- `[Revenue Opportunity $]` updates in real time  
+- MoM bars turn red/green for quick trend scans
 
 ---
 
-## 4. Screenshots
+## 3) Key Findings
+- **Q4 risk:** August revenue (~$3.4k) is followed by **~25% cancellations in November** → likely staffing/scheduling strain  
+- **Revenue lift:** A 5-point cancellation reduction adds **~$122/month** per location  
+- **Seasonality:** Normal softening into Q4; the cancel spike is larger than seasonality alone
 
-**Revenue vs. Churn Risk (Detail)**
-<img width="1636" height="1480" alt="Monthly  Revenue % Churn Risk" src="https://github.com/user-attachments/assets/a7a28832-39db-4689-9f81-16da637adec7" />
+---
 
-**MoM Growth & Red/Green Logic (Detail)**
-<img width="1476" height="1480" alt="MOM growth" src="https://github.com/user-attachments/assets/c439e963-4700-42ab-a7e4-e0db153fa6bf" />
+## 4) Screenshots
+
+**Revenue vs Cancellation Risk (detail)**  
+<img width="1636" height="1480" alt="Monthly  Revenue % Churn Risk (1)" src="https://github.com/user-attachments/assets/85b9f86c-83c5-4021-b335-086fc27e9002" />
+
+**MoM Growth (detail)**  
+<img width="1476" height="1480" alt="MOM growth" src="https://github.com/user-attachments/assets/8aaa4e88-c42c-4027-9b2a-bcc109a056cb" />
+
+---
+## 📚 Data Dictionary
+
+<img width="799" height="178" alt="Screenshot 2025-11-23 at 19 33 13" src="https://github.com/user-attachments/assets/3d5efec1-bf0b-4f00-8626-76cb56b970e2" />
+			
+"Owner: Akram Mohammed
+SLA: Source → SQL table by 6:00 AM PT monthly
+Notes: IDs salted/hashed; datetimes shifted for privacy."
+
+---
+
+## 📏 KPI Definitions
+	•	GPV (Gross Payment Volume): Sum of realized service revenue for completed/checkout visits
+	•	Cancellation Rate: (cancelled + no_show) / (completed + checkout + cancelled + no_show)
+	•	Safe MoM Growth: (GPV_t − GPV_(t-1)) / MAX(GPV_(t-1), 150)
+	•	1-pp Cancel Elasticity: GPV gain from a 1-point drop in cancellations
+	•	delta_gpv_1pp = (scheduled_cnt * 1%) * avg_ticket
+	•	Platform revenue: delta_gpv_1pp * 2.75% (configurable)
+
+---
+
+## 🧪 Assumptions & Limits
+	•	Price imputation is service-based and meant for demo; replace with POS payments for production.
+	•	Safe MoM floor uses $150; adjust per business.
+	•	Single-location example; multi-location rollups add location_id.
 
 ---
 
 ## 📂 Repository Structure
-
 ```text
 data/
-  appointments_anonymized.csv  # Raw data (salted/hashed)
+  appointments_anonymized.csv   # Raw data (salted/hashed)
 
 sql/
-  monthly_KPI's1.sql             # The cleaning & metrics logic
+  monthly_KPI's1.sql            # Cleaning + metrics logic
 
 screenshots/
   revenue_vs_churn.png
@@ -79,7 +107,8 @@ screenshots/
 
 README.md
 
-🔗 Data Source
-Dataset: Hair Salon Appointments (Anonymous) via Kaggle.
+---
 
-Note: IDs are salted/hashed and datetimes shifted for privacy.
+## 🔗 Data Source
+
+Dataset: Hair Salon Appointments (Anonymous) via Kaggle.
