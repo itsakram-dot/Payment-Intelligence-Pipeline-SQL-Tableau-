@@ -23,7 +23,7 @@ Result: Found a ~25% cancellation spike in Q4 and a ~$122/month recovery opportu
 ---
 
 ## 1) Data Engineering Layer (SQL)
-*File: `sql/monthly_KPI's1.sql`*
+*File: `sql/monthly_kpis.sql`*
 
 The SQL turns row-level bookings into a monthly finance table you can audit.
 
@@ -67,11 +67,7 @@ The SQL turns row-level bookings into a monthly finance table you can audit.
 ---
 ## 📚 Data Dictionary
 
-<img width="799" height="178" alt="Screenshot 2025-11-23 at 19 33 13" src="https://github.com/user-attachments/assets/3d5efec1-bf0b-4f00-8626-76cb56b970e2" />
-			
-"Owner: Akram Mohammed
-SLA: Source → SQL table by 6:00 AM PT monthly
-Notes: IDs salted/hashed; datetimes shifted for privacy."
+<img width="794" height="227" alt="Screenshot 2025-11-23 at 19 51 21" src="https://github.com/user-attachments/assets/4bd64d0e-5c7a-4209-bebf-1b11f6c3c1ad" />
 
 ---
 
