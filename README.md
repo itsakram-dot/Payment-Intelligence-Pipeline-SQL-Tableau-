@@ -1,7 +1,7 @@
 # Payment Intelligence Pipeline (SQL → Tableau)
 **Transforming raw appointment logs into governed financial and operational KPIs.**
 
-<img width="2598" height="1558" alt="Monthly Financial Performance (1)" src="https://github.com/user-attachments/assets/45967515-5db7-4053-933e-ad93a4bc9ef6" />
+<img width="2598" height="1558" alt="Monthly Financial Performance (2)" src="https://github.com/user-attachments/assets/83e66d63-7cd8-4d05-8069-4d3c43c49ed3" />
 
 ---
 
@@ -36,16 +36,17 @@ The SQL turns row-level bookings into a monthly finance table you can audit.
 ---
 
 ## 2) Visualization & Strategy Layer (Tableau)
+
 **Live Dashboard:** https://public.tableau.com/app/profile/akram.mohammed3381/viz/MonthlyFinancialPerformanceRevenueVsChurnRisk/Dashboard1
 
 ### Dashboard 1 — Revenue vs Cancellation Risk
 - GPV (bars) vs Cancellation Rate % (line) on a dual axis  
 - Mid-summer revenue peaks line up with higher cancellations (15–25%)
 
-### Dashboard 2 — Growth & Scenario Modeling
-- What-If slider for a 1–5% cancellation cut  
+### Dashboard 2 — Growth & Scenario Modeling 
 - `[Revenue Opportunity $]` updates in real time  
 - MoM bars turn red/green for quick trend scans
+- What-If slider for a 5% cancellation cut 
 
 ---
 
